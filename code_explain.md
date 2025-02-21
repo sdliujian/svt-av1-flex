@@ -54,8 +54,9 @@ SVT-AV1 源码主要包含如下目录和文件：
 
    Source/Lib/Encoder/Codec/ 
 
-——————————————————————
-
+===================================
+SVT-AV1 隐藏参数
+===================================
 SVT-AV1 有一个循环反馈的编码过程，会通过rate-control-process 来控制生成的码率。编码之前可以预设一个目标码率，然后编码器就会朝着这个目标进行优化
 
 所以其中一些控制码率的参数并不是预先设定好的，而是编码过程中自动调整的。
@@ -74,8 +75,8 @@ SVT-AV1 有一个循环反馈的编码过程，会通过rate-control-process 来
      - **`aq_mode` (Adaptive Quantization Mode)**: 决定如何对不同区域调整量化参数( 例如, motion vs. non-motion areas).
      - **`vbr` (Variable Bitrate)**:  在 VBR 模式中, 编码器会给剧烈运动的区域分配更多的bit.
    
-   - **查找**:
-     - 查找 `aq_strength`, `aq_mode`,  `adaptive_quantization`.
+   - **查找提示**:
+     - 搜索一些关键字，例如 `aq_strength`, `aq_mode`,  `adaptive_quantization`.
      - 有关于 motion，spatial activity，QP 的函数
 
 ---
@@ -84,43 +85,47 @@ SVT-AV1 有一个循环反馈的编码过程，会通过rate-control-process 来
    - **位置**: Motion analysis 在 motion estimation（运动估计） 和 motion compensation（运动补偿） 模块中实现:
      - `Source/Lib/Encoder/Codec/EbMotionEstimation.c`
      - `Source/Lib/Encoder/Codec/EbMotionCompensation.c`
-   - **Key Parameters**:
-     - **`motion_threshold`**: A threshold to distinguish between motion and non-motion areas.
-     - **`activity_map`**: A map that identifies regions with high motion or texture complexity.
-   - **What to Look For**:
-     - Search for terms like `motion_threshold`, `activity_map`, or `motion_intensity`.
-     - Look for functions that calculate motion vectors or analyze motion activity.
+   
+   - **关键参数**:
+     - **`motion_threshold`**: 用于区分运动区域和静止区域的阈值.
+     - **`activity_map`**: 用于识别高速运动或复杂纹理区域的映射表
+      
+   - **查找提示**:
+     - 搜索一些关键词，例如`motion_threshold`, `activity_map`, or `motion_intensity`.
+     - 搜索计算运动向量(motion vector) 的函数.
 
 ---
 
-### 3. **Perceptual Optimization**
-   - **Location**: Perceptual optimization is often handled in modules related to visual quality tuning:
+### 3. **视觉感知优化**
+   - **源码位置**: Perceptual optimization 通常在于视觉质量调优模块中处理:
      - `Source/Lib/Encoder/Codec/EbPictureAnalysis.c`
      - `Source/Lib/Encoder/Codec/EbPictureControlSet.c`
-   - **Key Parameters**:
-     - **`tune_metric`**: Controls whether the encoder prioritizes visual quality in motion or static areas.
-     - **`perceptual_optimization`**: A flag or parameter that enables/disables perceptual tuning.
-   - **What to Look For**:
-     - Search for terms like `perceptual_optimization`, `tune_metric`, or `visual_quality`.
+   
+   - **关键参数**:
+     - **`tune_metric`**: 控制编码器是否优先保障运动区域或静止区域的质量.
+     - **`perceptual_optimization`**: 打开/关闭视觉质量优化.
+
+   - **查找提示**:
+     - 搜索一些关键词，例如： `perceptual_optimization`, `tune_metric`, 或者 `visual_quality`.
 
 ---
 
-### 4. **Frame-Level and Block-Level Control**
-   - **Location**: Frame-level and block-level quality control is often handled in the mode decision and partitioning modules:
+### 4. **帧级别或者块级别的质量控制**
+   - **源码位置**:  帧级别或块级别的质量控制经常在"模式选择"或"划分"模块中实现:
      - `Source/Lib/Encoder/Codec/EbModeDecision.c`
      - `Source/Lib/Encoder/Codec/EbPartitioning.c`
-   - **Key Parameters**:
-     - **`block_qp_offset`**: Adjusts QP for specific blocks based on motion or texture.
-     - **`partitioning_decision`**: Determines how blocks are split, which can affect quality in motion vs. non-motion areas.
-   - **What to Look For**:
-     - Search for terms like `block_qp_offset`, `partitioning_decision`, or `mode_decision`.
+   - **关键参数**:
+     - **`block_qp_offset`**: 根据运动或纹理为特定的块调整量化参数 QP .
+     - **`partitioning_decision`**:  决定像素块应该如何切分，这会影响运动区域和静止区域的图像质量.
+   - **查找提示**:
+     - 搜索一些关键字，例如 `block_qp_offset`, `partitioning_decision`, 或 `mode_decision`.
 
 ---
 
-### 5. **Command-Line Interface (CLI) Parameters**
-   - **Location**: Some hidden or advanced parameters might be exposed in the CLI but not documented in the user guide. Check the CLI parsing code:
+### 5. **命令行界面(CLI) 参数**
+   - **源码位置**: 某些隐藏的或高级的参数可能在CLI中暴露，但是没有卸载使用指南中。查看一下CLI 输入参数分析代码:
      - `Source/App/EncApp/EbAppConfig.c`
-   - **What to Look For**:
+   - **查找提示**:
      - Search for terms like `motion_quality`, `static_quality`, or `adaptive_quality`.
 
 ---
