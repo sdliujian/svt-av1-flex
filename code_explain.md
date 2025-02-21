@@ -126,42 +126,39 @@ SVT-AV1 有一个循环反馈的编码过程，会通过rate-control-process 来
    - **源码位置**: 某些隐藏的或高级的参数可能在CLI中暴露，但是没有卸载使用指南中。查看一下CLI 输入参数分析代码:
      - `Source/App/EncApp/EbAppConfig.c`
    - **查找提示**:
-     - Search for terms like `motion_quality`, `static_quality`, or `adaptive_quality`.
+     - 搜索一些关键词，例如 `motion_quality`, `static_quality`, 或者 `adaptive_quality`.
 
 ---
 
-### Example: Finding Adaptive Quantization Parameters
-If you’re looking for adaptive quantization parameters, you might find code like this in `EbRateControl.c`:
+### 示例：寻找自适应量化参数
+如果要寻找自适应的量化参数 (adaptive quantization parameters), 或许能在 `EbRateControl.c`等文件中找到。
 ```c
 if (rc->aq_mode == AQ_MODE_AUTO) {
     // Adjust QP based on motion or texture activity
     qp_offset = calculate_qp_offset(activity_map, motion_intensity);
 }
 ```
-Here, `activity_map` and `motion_intensity` might be used to control quality in motion vs. non-motion areas.
+这里, `activity_map` 和 `motion_intensity` 就可能用于控制运动区域和静止区域的质量。
 
 ---
 
-### Tips for Exploring the Code
-1. **Use `grep` or IDE Search**:
-   - Use `grep` or your IDE’s search function to look for keywords like `motion`, `activity`, `qp`, or `quality`.
-2. **Follow Function Calls**:
-   - Start from the main encoding loop and trace function calls related to rate control, motion estimation, and mode decision.
-3. **Experiment with Parameters**:
-   - Once you identify relevant parameters, modify them and observe the impact on encoding quality and performance.
+一些重要位置：
+•   EbRateControlProcess.c:225-288  
+•   EbModeDecisionConfigurationProcess.c:45-85  
+•   Appendix-Rate-Control.md:580-634  
+•   firstpass.h:143-241  
+•   Parameters.md:234-249  
+•   encoder.h:127-247
 
-If you have a specific parameter or functionality in mind, let me know, and I can help narrow down the search!
-
-	•	EbRateControlProcess.c:225-288  EbModeDecisionConfigurationProcess.c:45-85  Appendix-Rate-Control.md:580-634  firstpass.h:143-241  Parameters.md:234-249  encoder.h:127-247
-
-The parameters that control the code rate for motion areas and non-motion areas in the encoder library can be found in several files. Key parameters include:
+控制运动区域和非运动区域码率的参数可以在一些文件中找到，关键参数包括：
 	1	EbRateControlProcess.c:
-	◦	STATIC_MOTION_THRESH
-	◦	ME_SAD_LOW_THRESHOLD1, ME_SAD_LOW_THRESHOLD2, ME_SAD_HIGH_THRESHOLD
-	◦	MAX_REF_AREA_I, MAX_REF_AREA_NONI, REF_AREA_LOW_THRESHOLD, REF_AREA_MED_THRESHOLD
-	◦	FAST_MOVING_KF_GROUP_THRESH, MEDIUM_MOVING_KF_GROUP_THRESH
+		STATIC_MOTION_THRESH
+		ME_SAD_LOW_THRESHOLD1, ME_SAD_LOW_THRESHOLD2, ME_SAD_HIGH_THRESHOLD
+		MAX_REF_AREA_I, MAX_REF_AREA_NONI, REF_AREA_LOW_THRESHOLD, REF_AREA_MED_THRESHOLD
+		FAST_MOVING_KF_GROUP_THRESH, MEDIUM_MOVING_KF_GROUP_THRESH
 	2	firstpass.h:
-	◦	FRAME_STATS structure members such as coded_error, mv_count, inter_count, second_ref_count, neutral_count, intra_skip_count, sum_in_vectors, sum_mvc, sum_mvr_abs, sum_mvc_abs
+		FRAME_STATS structure members such as coded_error, mv_count, inter_count, second_ref_count, neutral_count, intra_skip_count, sum_in_vectors, sum_mvc, sum_mvr_abs, sum_mvc_abs
 	3	Appendix-Rate-Control.md:
-	◦	Descriptions of functions such as process_rc_stat(), av1_set_target_rate(), rc_pick_q_and_bounds()
-You can refer to the specific sections in the EbRateControlProcess.c and Appendix-Rate-Control.md files for more details.
+		Descriptions of functions such as process_rc_stat(), av1_set_target_rate(), rc_pick_q_and_bounds()
+
+可以去EbRateControlProcess.c and Appendix-Rate-Control.md 等文件中寻找.
